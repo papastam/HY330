@@ -1,6 +1,6 @@
 options:
   parameters:
-    author: zoe
+    author: chris
     catch_exceptions: 'True'
     category: '[GRC Hier Blocks]'
     cmake_opt: ''
@@ -11,7 +11,7 @@ options:
     gen_linking: dynamic
     generate_options: qt_gui
     hier_block_src_path: '.:'
-    id: lab0_1
+    id: lab0_2
     max_nouts: '0'
     output_language: python
     placement: (0,0)
@@ -45,7 +45,29 @@ blocks:
     coordinate: [184, 12]
     rotation: 0
     state: enabled
-- name: analog_sig_source_x_0_0_1
+- name: analog_sig_source_x_0
+  id: analog_sig_source_x
+  parameters:
+    affinity: ''
+    alias: ''
+    amp: '1'
+    comment: ''
+    freq: '1000'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    offset: '0'
+    phase: '0'
+    samp_rate: samp_rate
+    type: float
+    waveform: analog.GR_SIN_WAVE
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [72, 116.0]
+    rotation: 0
+    state: true
+- name: analog_sig_source_x_1
   id: analog_sig_source_x
   parameters:
     affinity: ''
@@ -56,17 +78,61 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     offset: '0'
-    phase: '3.14159265359'
+    phase: '0'
     samp_rate: samp_rate
     type: float
-    waveform: analog.GR_COS_WAVE
+    waveform: analog.GR_TRI_WAVE
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [48, 236.0]
+    coordinate: [72, 252.0]
     rotation: 0
-    state: enabled
+    state: true
+- name: analog_sig_source_x_1_0
+  id: analog_sig_source_x
+  parameters:
+    affinity: ''
+    alias: ''
+    amp: '3'
+    comment: ''
+    freq: '3000'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    offset: '0'
+    phase: '0'
+    samp_rate: samp_rate
+    type: float
+    waveform: analog.GR_SAW_WAVE
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [72, 388.0]
+    rotation: 0
+    state: true
+- name: analog_sig_source_x_1_0_0
+  id: analog_sig_source_x
+  parameters:
+    affinity: ''
+    alias: ''
+    amp: '4'
+    comment: ''
+    freq: '4000'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    offset: '0'
+    phase: '0'
+    samp_rate: samp_rate
+    type: float
+    waveform: analog.GR_SQR_WAVE
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [72, 524.0]
+    rotation: 0
+    state: true
 - name: blocks_throttle_0
   id: blocks_throttle
   parameters:
@@ -83,7 +149,64 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [360, 276.0]
+    coordinate: [320, 156.0]
+    rotation: 0
+    state: true
+- name: blocks_throttle_0_0
+  id: blocks_throttle
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    ignoretag: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samples_per_second: samp_rate
+    type: float
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [320, 292.0]
+    rotation: 0
+    state: true
+- name: blocks_throttle_0_1
+  id: blocks_throttle
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    ignoretag: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samples_per_second: samp_rate
+    type: float
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [320, 428.0]
+    rotation: 0
+    state: true
+- name: blocks_throttle_0_1_0
+  id: blocks_throttle
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    ignoretag: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samples_per_second: samp_rate
+    type: float
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [320, 564.0]
     rotation: 0
     state: true
 - name: qtgui_time_sink_x_0
@@ -103,7 +226,7 @@ blocks:
     alpha9: '1.0'
     autoscale: 'False'
     axislabels: 'True'
-    color1: magenta
+    color1: blue
     color10: dark blue
     color2: red
     color3: green
@@ -118,11 +241,11 @@ blocks:
     entags: 'True'
     grid: 'False'
     gui_hint: ''
-    label1: Ex_1_Signal
+    label1: Sine
     label10: Signal 10
-    label2: Signal 2
-    label3: Signal 3
-    label4: Signal 4
+    label2: Triangle
+    label3: Sawtooth
+    label4: Square
     label5: Signal 5
     label6: Signal 6
     label7: Signal 7
@@ -140,7 +263,7 @@ blocks:
     marker8: '-1'
     marker9: '-1'
     name: '""'
-    nconnections: '1'
+    nconnections: '4'
     size: '1024'
     srate: samp_rate
     stemplot: 'False'
@@ -180,13 +303,19 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [568, 260.0]
+    coordinate: [648, 320.0]
     rotation: 0
     state: true
 
 connections:
-- [analog_sig_source_x_0_0_1, '0', blocks_throttle_0, '0']
+- [analog_sig_source_x_0, '0', blocks_throttle_0, '0']
+- [analog_sig_source_x_1, '0', blocks_throttle_0_0, '0']
+- [analog_sig_source_x_1_0, '0', blocks_throttle_0_1, '0']
+- [analog_sig_source_x_1_0_0, '0', blocks_throttle_0_1_0, '0']
 - [blocks_throttle_0, '0', qtgui_time_sink_x_0, '0']
+- [blocks_throttle_0_0, '0', qtgui_time_sink_x_0, '1']
+- [blocks_throttle_0_1, '0', qtgui_time_sink_x_0, '2']
+- [blocks_throttle_0_1_0, '0', qtgui_time_sink_x_0, '3']
 
 metadata:
   file_format: 1
