@@ -34,6 +34,8 @@ import signal
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
+from gnuradio.qtgui import Range, RangeWidget
+from PyQt5 import QtCore
 
 
 
@@ -76,11 +78,27 @@ class lab2_1(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
         self.samp_rate = samp_rate = 98000
+        self.S2_FREQ = S2_FREQ = 5000
+        self.S2_AMP = S2_AMP = 2
+        self.S1_FREQ = S1_FREQ = 5000
+        self.S1_AMP = S1_AMP = 2
 
         ##################################################
         # Blocks
         ##################################################
 
+        self._S2_FREQ_range = Range(0, 20000, 1000, 5000, 200)
+        self._S2_FREQ_win = RangeWidget(self._S2_FREQ_range, self.set_S2_FREQ, "'S2_FREQ'", "counter_slider", float, QtCore.Qt.Horizontal)
+        self.top_layout.addWidget(self._S2_FREQ_win)
+        self._S2_AMP_range = Range(0, 10, 1, 2, 200)
+        self._S2_AMP_win = RangeWidget(self._S2_AMP_range, self.set_S2_AMP, "'S2_AMP'", "counter_slider", float, QtCore.Qt.Horizontal)
+        self.top_layout.addWidget(self._S2_AMP_win)
+        self._S1_FREQ_range = Range(0, 20000, 1000, 5000, 200)
+        self._S1_FREQ_win = RangeWidget(self._S1_FREQ_range, self.set_S1_FREQ, "'S1_FREQ'", "counter_slider", float, QtCore.Qt.Horizontal)
+        self.top_layout.addWidget(self._S1_FREQ_win)
+        self._S1_AMP_range = Range(0, 10, 1, 2, 200)
+        self._S1_AMP_win = RangeWidget(self._S1_AMP_range, self.set_S1_AMP, "'S1_AMP'", "counter_slider", float, QtCore.Qt.Horizontal)
+        self.top_layout.addWidget(self._S1_AMP_win)
         self.qtgui_time_sink_x_0 = qtgui.time_sink_f(
             1024, #size
             samp_rate, #samp_rate
@@ -150,9 +168,9 @@ class lab2_1(gr.top_block, Qt.QWidget):
         self.qtgui_freq_sink_x_0.set_fft_window_normalized(False)
 
 
-        self.qtgui_freq_sink_x_0.set_plot_pos_half(not True)
+        self.qtgui_freq_sink_x_0.set_plot_pos_half(not False)
 
-        labels = ['', '', '', '', '',
+        labels = ['S1', 'S2', 'S1+S2', '', '',
             '', '', '', '', '']
         widths = [1, 1, 1, 1, 1,
             1, 1, 1, 1, 1]
@@ -172,10 +190,10 @@ class lab2_1(gr.top_block, Qt.QWidget):
 
         self._qtgui_freq_sink_x_0_win = sip.wrapinstance(self.qtgui_freq_sink_x_0.qwidget(), Qt.QWidget)
         self.top_layout.addWidget(self._qtgui_freq_sink_x_0_win)
-        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_float*1, 33000,True)
+        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_float*1, samp_rate,True)
         self.blocks_add_xx_0 = blocks.add_vff(1)
-        self.analog_sig_source_x_0_0_0 = analog.sig_source_f(samp_rate, analog.GR_COS_WAVE, 5000, 2, 0, 0)
-        self.analog_sig_source_x_0_0 = analog.sig_source_f(samp_rate, analog.GR_SIN_WAVE, 12000, 2, 0, 0)
+        self.analog_sig_source_x_0_0_0 = analog.sig_source_f(samp_rate, analog.GR_COS_WAVE, S1_FREQ, S1_AMP, 0, 0)
+        self.analog_sig_source_x_0_0 = analog.sig_source_f(samp_rate, analog.GR_SIN_WAVE, S2_FREQ, S2_AMP, 0, 0)
 
 
         ##################################################
@@ -207,8 +225,37 @@ class lab2_1(gr.top_block, Qt.QWidget):
         self.samp_rate = samp_rate
         self.analog_sig_source_x_0_0.set_sampling_freq(self.samp_rate)
         self.analog_sig_source_x_0_0_0.set_sampling_freq(self.samp_rate)
+        self.blocks_throttle_0.set_sample_rate(self.samp_rate)
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate)
         self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate)
+
+    def get_S2_FREQ(self):
+        return self.S2_FREQ
+
+    def set_S2_FREQ(self, S2_FREQ):
+        self.S2_FREQ = S2_FREQ
+        self.analog_sig_source_x_0_0.set_frequency(self.S2_FREQ)
+
+    def get_S2_AMP(self):
+        return self.S2_AMP
+
+    def set_S2_AMP(self, S2_AMP):
+        self.S2_AMP = S2_AMP
+        self.analog_sig_source_x_0_0.set_amplitude(self.S2_AMP)
+
+    def get_S1_FREQ(self):
+        return self.S1_FREQ
+
+    def set_S1_FREQ(self, S1_FREQ):
+        self.S1_FREQ = S1_FREQ
+        self.analog_sig_source_x_0_0_0.set_frequency(self.S1_FREQ)
+
+    def get_S1_AMP(self):
+        return self.S1_AMP
+
+    def set_S1_AMP(self, S1_AMP):
+        self.S1_AMP = S1_AMP
+        self.analog_sig_source_x_0_0_0.set_amplitude(self.S1_AMP)
 
 
 
