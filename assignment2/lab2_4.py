@@ -136,6 +136,15 @@ class lab2_4(gr.top_block, Qt.QWidget):
 
         self._qtgui_freq_sink_x_0_win = sip.wrapinstance(self.qtgui_freq_sink_x_0.qwidget(), Qt.QWidget)
         self.top_layout.addWidget(self._qtgui_freq_sink_x_0_win)
+        self.low_pass_filter_0 = filter.interp_fir_filter_fff(
+            1,
+            firdes.low_pass(
+                1,
+                samp_rate,
+                4000,
+                10,
+                window.WIN_HAMMING,
+                6.76))
         self.blocks_throttle_0 = blocks.throttle(gr.sizeof_float*1, samp_rate,True)
         self.blocks_null_sink_0 = blocks.null_sink(gr.sizeof_float*1)
         self.blocks_deinterleave_0 = blocks.deinterleave(gr.sizeof_float*1, 1)
@@ -145,13 +154,14 @@ class lab2_4(gr.top_block, Qt.QWidget):
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.analog_sig_source_x_0_0_0, 0), (self.blocks_deinterleave_0, 0))
+        self.connect((self.analog_sig_source_x_0_0_0, 0), (self.low_pass_filter_0, 0))
         self.connect((self.analog_sig_source_x_0_0_0, 0), (self.qtgui_freq_sink_x_0, 0))
-        self.connect((self.blocks_deinterleave_0, 1), (self.blocks_null_sink_0, 0))
-        self.connect((self.blocks_deinterleave_0, 3), (self.blocks_null_sink_0, 2))
         self.connect((self.blocks_deinterleave_0, 2), (self.blocks_null_sink_0, 1))
+        self.connect((self.blocks_deinterleave_0, 3), (self.blocks_null_sink_0, 2))
+        self.connect((self.blocks_deinterleave_0, 1), (self.blocks_null_sink_0, 0))
         self.connect((self.blocks_deinterleave_0, 0), (self.blocks_throttle_0, 0))
         self.connect((self.blocks_throttle_0, 0), (self.rational_resampler_xxx_0, 0))
+        self.connect((self.low_pass_filter_0, 0), (self.blocks_deinterleave_0, 0))
         self.connect((self.rational_resampler_xxx_0, 0), (self.qtgui_freq_sink_x_0, 1))
 
 
@@ -170,6 +180,7 @@ class lab2_4(gr.top_block, Qt.QWidget):
         self.samp_rate = samp_rate
         self.analog_sig_source_x_0_0_0.set_sampling_freq(self.samp_rate)
         self.blocks_throttle_0.set_sample_rate(self.samp_rate)
+        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate, 4000, 10, window.WIN_HAMMING, 6.76))
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate)
 
     def get_frequency(self):
