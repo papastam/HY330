@@ -148,7 +148,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [936, 292.0]
+    coordinate: [920, 292.0]
     rotation: 0
     state: enabled
 - name: analog_noise_source_x_0
@@ -167,7 +167,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [864, 164.0]
+    coordinate: [904, 180.0]
     rotation: 0
     state: enabled
 - name: analog_quadrature_demod_cf_0
@@ -245,7 +245,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1120, 200.0]
+    coordinate: [1160, 200.0]
     rotation: 0
     state: enabled
 - name: blocks_char_to_float_0
@@ -280,7 +280,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1312, 112.0]
+    coordinate: [1312, 128.0]
     rotation: 0
     state: enabled
 - name: blocks_packed_to_unpacked_xx_0
@@ -317,7 +317,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [744, 292.0]
+    coordinate: [736, 292.0]
     rotation: 0
     state: enabled
 - name: blocks_throttle_0
@@ -336,7 +336,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [368, 468.0]
+    coordinate: [344, 468.0]
     rotation: 0
     state: enabled
 - name: digital_clock_recovery_mm_xx_0
@@ -373,7 +373,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [400, 292.0]
+    coordinate: [408, 292.0]
     rotation: 0
     state: enabled
 - name: import_0
@@ -577,7 +577,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1432, 120.0]
+    coordinate: [1440, 140.0]
     rotation: 0
     state: true
 - name: virtual_source_0
@@ -590,7 +590,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [112, 524.0]
+    coordinate: [112, 540.0]
     rotation: 0
     state: true
 
