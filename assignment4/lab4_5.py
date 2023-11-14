@@ -7,42 +7,30 @@
 # GNU Radio Python Flow Graph
 # Title: Lab4 5
 # Author: zoe
-# GNU Radio version: 3.10.5.1
+# GNU Radio version: 3.10.7.0
 
 from packaging.version import Version as StrictVersion
-
-if __name__ == '__main__':
-    import ctypes
-    import sys
-    if sys.platform.startswith('linux'):
-        try:
-            x11 = ctypes.cdll.LoadLibrary('libX11.so')
-            x11.XInitThreads()
-        except:
-            print("Warning: failed to XInitThreads()")
-
 from PyQt5 import Qt
 from gnuradio import qtgui
-from gnuradio.filter import firdes
-import sip
 from gnuradio import analog
 import math
 from gnuradio import blocks
 import numpy
 from gnuradio import digital
 from gnuradio import gr
+from gnuradio.filter import firdes
 from gnuradio.fft import window
 import sys
 import signal
+from PyQt5 import Qt
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
 from gnuradio.qtgui import Range, RangeWidget
 from PyQt5 import QtCore
+import sip
 
 
-
-from gnuradio import qtgui
 
 class lab4_5(gr.top_block, Qt.QWidget):
 
@@ -53,8 +41,8 @@ class lab4_5(gr.top_block, Qt.QWidget):
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
-        except:
-            pass
+        except BaseException as exc:
+            print(f"Qt GUI: Could not set Icon: {str(exc)}", file=sys.stderr)
         self.top_scroll_layout = Qt.QVBoxLayout()
         self.setLayout(self.top_scroll_layout)
         self.top_scroll = Qt.QScrollArea()
@@ -74,8 +62,8 @@ class lab4_5(gr.top_block, Qt.QWidget):
                 self.restoreGeometry(self.settings.value("geometry").toByteArray())
             else:
                 self.restoreGeometry(self.settings.value("geometry"))
-        except:
-            pass
+        except BaseException as exc:
+            print(f"Qt GUI: Could not restore geometry: {str(exc)}", file=sys.stderr)
 
         ##################################################
         # Variables
@@ -190,7 +178,7 @@ class lab4_5(gr.top_block, Qt.QWidget):
         self.top_layout.addWidget(self._qtgui_freq_sink_x_0_win)
         self.digital_map_bb_0 = digital.map_bb([-1, 1])
         self.digital_clock_recovery_mm_xx_0 = digital.clock_recovery_mm_ff(sps, (math.pi/100.0), 0.5, 0.175, 0.005)
-        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, (samp_rate * 10),True)
+        self.blocks_throttle2_0 = blocks.throttle( gr.sizeof_gr_complex*1, (samp_rate*10), True, 0 if "auto" == "auto" else max( int(float(0.1) * (samp_rate*10)) if "auto" == "time" else int(0.1), 1) )
         self.blocks_repeat_0 = blocks.repeat(gr.sizeof_float*1, sps)
         self.blocks_packed_to_unpacked_xx_0 = blocks.packed_to_unpacked_bb(1, gr.GR_MSB_FIRST)
         self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
@@ -215,10 +203,10 @@ class lab4_5(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_add_xx_0, 0), (self.blocks_multiply_xx_0, 1))
         self.connect((self.blocks_char_to_float_0, 0), (self.blocks_repeat_0, 0))
         self.connect((self.blocks_multiply_xx_0, 0), (self.analog_quadrature_demod_cf_0, 0))
-        self.connect((self.blocks_multiply_xx_0, 0), (self.blocks_throttle_0, 0))
+        self.connect((self.blocks_multiply_xx_0, 0), (self.blocks_throttle2_0, 0))
         self.connect((self.blocks_packed_to_unpacked_xx_0, 0), (self.digital_map_bb_0, 0))
         self.connect((self.blocks_repeat_0, 0), (self.analog_frequency_modulator_fc_0, 0))
-        self.connect((self.blocks_throttle_0, 0), (self.qtgui_freq_sink_x_0, 1))
+        self.connect((self.blocks_throttle2_0, 0), (self.qtgui_freq_sink_x_0, 1))
         self.connect((self.digital_clock_recovery_mm_xx_0, 0), (self.qtgui_time_sink_x_0, 0))
         self.connect((self.digital_map_bb_0, 0), (self.blocks_char_to_float_0, 0))
 
@@ -263,7 +251,7 @@ class lab4_5(gr.top_block, Qt.QWidget):
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate)
-        self.blocks_throttle_0.set_sample_rate((self.samp_rate * 10))
+        self.blocks_throttle2_0.set_sample_rate((self.samp_rate*10))
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate)
         self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate / self.sps)
 
