@@ -7,41 +7,29 @@
 # GNU Radio Python Flow Graph
 # Title: simplified_fsk
 # Author: Manolis Surligas
-# GNU Radio version: 3.10.5.1
+# GNU Radio version: 3.10.7.0
 
 from packaging.version import Version as StrictVersion
-
-if __name__ == '__main__':
-    import ctypes
-    import sys
-    if sys.platform.startswith('linux'):
-        try:
-            x11 = ctypes.cdll.LoadLibrary('libX11.so')
-            x11.XInitThreads()
-        except:
-            print("Warning: failed to XInitThreads()")
-
 from PyQt5 import Qt
 from gnuradio import qtgui
-from gnuradio.filter import firdes
-import sip
 from gnuradio import analog
 from gnuradio import blocks
 import numpy
 from gnuradio import filter
+from gnuradio.filter import firdes
 from gnuradio import gr
 from gnuradio.fft import window
 import sys
 import signal
+from PyQt5 import Qt
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
 from gnuradio.qtgui import Range, RangeWidget
 from PyQt5 import QtCore
+import sip
 
 
-
-from gnuradio import qtgui
 
 class simplified_fsk(gr.top_block, Qt.QWidget):
 
@@ -52,8 +40,8 @@ class simplified_fsk(gr.top_block, Qt.QWidget):
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
-        except:
-            pass
+        except BaseException as exc:
+            print(f"Qt GUI: Could not set Icon: {str(exc)}", file=sys.stderr)
         self.top_scroll_layout = Qt.QVBoxLayout()
         self.setLayout(self.top_scroll_layout)
         self.top_scroll = Qt.QScrollArea()
@@ -73,8 +61,8 @@ class simplified_fsk(gr.top_block, Qt.QWidget):
                 self.restoreGeometry(self.settings.value("geometry").toByteArray())
             else:
                 self.restoreGeometry(self.settings.value("geometry"))
-        except:
-            pass
+        except BaseException as exc:
+            print(f"Qt GUI: Could not restore geometry: {str(exc)}", file=sys.stderr)
 
         ##################################################
         # Variables
@@ -119,7 +107,7 @@ class simplified_fsk(gr.top_block, Qt.QWidget):
         self.qtgui_time_sink_x_1.enable_stem_plot(False)
 
 
-        labels = ['Imaginary', 'Real', 'Signal 3', 'Signal 4', 'Signal 5',
+        labels = ['Shaped Signal Re', 'Shaped Signal Im', 'GNU FM Signal RE', 'GNU FM Signal Im', 'Signal 5',
             'Signal 6', 'Signal 7', 'Signal 8', 'Signal 9', 'Signal 10']
         widths = [1, 1, 1, 1, 1,
             1, 1, 1, 1, 1]
@@ -171,7 +159,7 @@ class simplified_fsk(gr.top_block, Qt.QWidget):
 
 
 
-        labels = ['', '', '', '', '',
+        labels = ['Shaped Signal', 'GNU FM Signal', '', '', '',
             '', '', '', '', '']
         widths = [1, 1, 1, 1, 1,
             1, 1, 1, 1, 1]
@@ -192,8 +180,8 @@ class simplified_fsk(gr.top_block, Qt.QWidget):
         self._qtgui_freq_sink_x_0_win = sip.wrapinstance(self.qtgui_freq_sink_x_0.qwidget(), Qt.QWidget)
         self.top_layout.addWidget(self._qtgui_freq_sink_x_0_win)
         self.blocks_uchar_to_float_0 = blocks.uchar_to_float()
-        self.blocks_throttle_1 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate,True)
-        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_char*1, samp_rate,True)
+        self.blocks_throttle2_0_0 = blocks.throttle( gr.sizeof_char*1, samp_rate, True, 0 if "auto" == "auto" else max( int(float(0.1) * samp_rate) if "auto" == "time" else int(0.1), 1) )
+        self.blocks_throttle2_0 = blocks.throttle( gr.sizeof_gr_complex*1, samp_rate, True, 0 if "auto" == "auto" else max( int(float(0.1) * samp_rate) if "auto" == "time" else int(0.1), 1) )
         self.blocks_sub_xx_0 = blocks.sub_cc(1)
         self.blocks_repeat_0 = blocks.repeat(gr.sizeof_char*1, symbol_duration)
         self.blocks_multiply_xx_0_0 = blocks.multiply_vcc(1)
@@ -213,8 +201,8 @@ class simplified_fsk(gr.top_block, Qt.QWidget):
         self.connect((self.analog_const_source_x_0, 0), (self.blocks_sub_xx_0, 0))
         self.connect((self.analog_frequency_modulator_fc_0, 0), (self.qtgui_freq_sink_x_0, 1))
         self.connect((self.analog_frequency_modulator_fc_0, 0), (self.qtgui_time_sink_x_1, 1))
-        self.connect((self.analog_random_source_x_0, 0), (self.blocks_throttle_0, 0))
-        self.connect((self.analog_sig_source_x_0, 0), (self.blocks_throttle_1, 0))
+        self.connect((self.analog_random_source_x_0, 0), (self.blocks_throttle2_0_0, 0))
+        self.connect((self.analog_sig_source_x_0, 0), (self.blocks_throttle2_0, 0))
         self.connect((self.analog_sig_source_x_0_0, 0), (self.blocks_multiply_xx_0_0, 1))
         self.connect((self.blocks_add_xx_0, 0), (self.root_raised_cosine_filter_0, 0))
         self.connect((self.blocks_float_to_complex_0, 0), (self.blocks_multiply_xx_0, 0))
@@ -223,8 +211,8 @@ class simplified_fsk(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_multiply_xx_0_0, 0), (self.blocks_add_xx_0, 1))
         self.connect((self.blocks_repeat_0, 0), (self.blocks_uchar_to_float_0, 0))
         self.connect((self.blocks_sub_xx_0, 0), (self.blocks_multiply_xx_0_0, 0))
-        self.connect((self.blocks_throttle_0, 0), (self.blocks_repeat_0, 0))
-        self.connect((self.blocks_throttle_1, 0), (self.blocks_multiply_xx_0, 1))
+        self.connect((self.blocks_throttle2_0, 0), (self.blocks_multiply_xx_0, 1))
+        self.connect((self.blocks_throttle2_0_0, 0), (self.blocks_repeat_0, 0))
         self.connect((self.blocks_uchar_to_float_0, 0), (self.analog_frequency_modulator_fc_0, 0))
         self.connect((self.blocks_uchar_to_float_0, 0), (self.blocks_float_to_complex_0, 0))
         self.connect((self.root_raised_cosine_filter_0, 0), (self.qtgui_freq_sink_x_0, 0))
@@ -260,8 +248,8 @@ class simplified_fsk(gr.top_block, Qt.QWidget):
         self.samp_rate = samp_rate
         self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate)
         self.analog_sig_source_x_0_0.set_sampling_freq(self.samp_rate)
-        self.blocks_throttle_0.set_sample_rate(self.samp_rate)
-        self.blocks_throttle_1.set_sample_rate(self.samp_rate)
+        self.blocks_throttle2_0.set_sample_rate(self.samp_rate)
+        self.blocks_throttle2_0_0.set_sample_rate(self.samp_rate)
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate)
         self.qtgui_time_sink_x_1.set_samp_rate(self.samp_rate)
         self.root_raised_cosine_filter_0.set_taps(firdes.root_raised_cosine(1, self.samp_rate, 1.0, 0.35, 50))
