@@ -65,7 +65,7 @@ blocks:
     bus_structure: null
     coordinate: [392, 8.0]
     rotation: 0
-    state: true
+    state: enabled
 - name: symbol_duration
   id: variable
   parameters:
@@ -144,6 +144,7 @@ blocks:
     offset: '0'
     phase: '0'
     samp_rate: samp_rate
+    showports: 'False'
     type: complex
     waveform: analog.GR_COS_WAVE
   states:
@@ -166,6 +167,7 @@ blocks:
     offset: '0'
     phase: '0'
     samp_rate: samp_rate
+    showports: 'False'
     type: complex
     waveform: analog.GR_COS_WAVE
   states:
@@ -260,7 +262,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [360, 144.0]
+    coordinate: [368, 144.0]
     rotation: 0
     state: true
 - name: blocks_sub_xx_0
@@ -281,32 +283,15 @@ blocks:
     coordinate: [528, 376.0]
     rotation: 0
     state: true
-- name: blocks_throttle_0
-  id: blocks_throttle
+- name: blocks_throttle2_0
+  id: blocks_throttle2
   parameters:
     affinity: ''
     alias: ''
     comment: ''
     ignoretag: 'True'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    samples_per_second: samp_rate
-    type: byte
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [208, 144.0]
-    rotation: 0
-    state: true
-- name: blocks_throttle_1
-  id: blocks_throttle
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    ignoretag: 'True'
+    limit: auto
+    maximum: '0.1'
     maxoutbuf: '0'
     minoutbuf: '0'
     samples_per_second: samp_rate
@@ -316,7 +301,28 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [496, 272.0]
+    coordinate: [480, 264.0]
+    rotation: 0
+    state: true
+- name: blocks_throttle2_0_0
+  id: blocks_throttle2
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    ignoretag: 'True'
+    limit: auto
+    maximum: '0.1'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samples_per_second: samp_rate
+    type: byte
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [208, 136.0]
     rotation: 0
     state: true
 - name: blocks_uchar_to_float_0
@@ -331,7 +337,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [520, 152.0]
+    coordinate: [528, 152.0]
     rotation: 0
     state: true
 - name: qtgui_freq_sink_x_0
@@ -371,9 +377,9 @@ blocks:
     grid: 'False'
     gui_hint: ''
     label: Relative Gain
-    label1: ''
+    label1: Shaped Signal
     label10: ''''''
-    label2: ''''''
+    label2: GNU FM Signal
     label3: ''''''
     label4: ''''''
     label5: ''''''
@@ -447,11 +453,11 @@ blocks:
     entags: 'True'
     grid: 'False'
     gui_hint: ''
-    label1: Imaginary
+    label1: Shaped Signal Re
     label10: Signal 10
-    label2: Real
-    label3: Signal 3
-    label4: Signal 4
+    label2: Shaped Signal Im
+    label3: GNU FM Signal RE
+    label4: GNU FM Signal Im
     label5: Signal 5
     label6: Signal 6
     label7: Signal 7
@@ -532,7 +538,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [960, 400.0]
+    coordinate: [960, 344.0]
     rotation: 0
     state: true
 
@@ -540,8 +546,8 @@ connections:
 - [analog_const_source_x_0, '0', blocks_sub_xx_0, '0']
 - [analog_frequency_modulator_fc_0, '0', qtgui_freq_sink_x_0, '1']
 - [analog_frequency_modulator_fc_0, '0', qtgui_time_sink_x_1, '1']
-- [analog_random_source_x_0, '0', blocks_throttle_0, '0']
-- [analog_sig_source_x_0, '0', blocks_throttle_1, '0']
+- [analog_random_source_x_0, '0', blocks_throttle2_0_0, '0']
+- [analog_sig_source_x_0, '0', blocks_throttle2_0, '0']
 - [analog_sig_source_x_0_0, '0', blocks_multiply_xx_0_0, '1']
 - [blocks_add_xx_0, '0', root_raised_cosine_filter_0, '0']
 - [blocks_float_to_complex_0, '0', blocks_multiply_xx_0, '0']
@@ -550,8 +556,8 @@ connections:
 - [blocks_multiply_xx_0_0, '0', blocks_add_xx_0, '1']
 - [blocks_repeat_0, '0', blocks_uchar_to_float_0, '0']
 - [blocks_sub_xx_0, '0', blocks_multiply_xx_0_0, '0']
-- [blocks_throttle_0, '0', blocks_repeat_0, '0']
-- [blocks_throttle_1, '0', blocks_multiply_xx_0, '1']
+- [blocks_throttle2_0, '0', blocks_multiply_xx_0, '1']
+- [blocks_throttle2_0_0, '0', blocks_repeat_0, '0']
 - [blocks_uchar_to_float_0, '0', analog_frequency_modulator_fc_0, '0']
 - [blocks_uchar_to_float_0, '0', blocks_float_to_complex_0, '0']
 - [root_raised_cosine_filter_0, '0', qtgui_freq_sink_x_0, '0']
@@ -559,4 +565,4 @@ connections:
 
 metadata:
   file_format: 1
-  grc_version: 3.10.5.1
+  grc_version: 3.10.7.0
