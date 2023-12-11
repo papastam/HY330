@@ -1,0 +1,26 @@
+id: cs330_project2023_deinterleaver
+label: deinterleaver
+category: '[cs330_project2023]'
+
+templates:
+  imports: from gnuradio import cs330_project2023
+  make: cs330_project2023.deinterleaver(${block_size.val})
+
+parameters:
+- id: block_size
+  label: Block Size
+  dtype: enum
+  options: ['96', '192', '384']
+  option_attributes:
+        val: [96, 192, 384]
+
+inputs:
+- domain: message
+  id: pdu_in
+  
+outputs:
+- domain: message
+  id: pdu_out
+
+
+file_format: 1

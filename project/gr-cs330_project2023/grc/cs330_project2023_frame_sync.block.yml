@@ -1,0 +1,41 @@
+id: cs330_project2023_frame_sync
+label: frame_sync
+category: '[cs330_project2023]'
+
+templates:
+  imports: from gnuradio import cs330_project2023
+  make: cs330_project2023.frame_sync(${preamble}, ${preamble_len}, ${sync_word}, ${mod})
+
+parameters:
+- id: preamble
+  label: Preamble
+  dtype: raw
+  default: '0xAA'
+
+- id: preamble_len
+  label: Preamble Length
+  dtype: int
+  default: 64
+
+- id: sync_word
+  label: Synchronization Word
+  dtype: raw
+  default: '[0x58, 0x9A]'
+
+- id: mod
+  label: Modulation
+  dtype: int
+  options: [0, 1]
+  option_labels: [BPSK, QPSK]
+  default: 0
+
+inputs:
+- label: in
+  domain: stream
+  dtype: byte
+
+outputs:
+- id: pdu
+  domain: message
+
+file_format: 1

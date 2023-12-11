@@ -1,0 +1,26 @@
+id: cs330_project2023_fec_decoder
+label: fec_decoder
+category: '[cs330_project2023]'
+
+templates:
+  imports: from gnuradio import cs330_project2023
+  make: cs330_project2023.fec_decoder(${type.val})
+
+
+parameters:
+- id: fec_type
+  label: FEC Type
+  dtype: enum
+  options: [No FEC, Hamming, Golay]
+  option_attributes:
+        val: [0, 1, 2]
+
+inputs:
+- domain: message
+  id: pdu_in
+  
+outputs:
+- domain: message
+  id: pdu_out
+
+file_format: 1
