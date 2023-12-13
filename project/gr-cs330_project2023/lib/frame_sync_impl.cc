@@ -81,35 +81,36 @@ namespace gr {
     {
     const uint8_t *in = (const uint8_t *) input_items[0];
 
-    // Print all bytes of the input in hex
-    int i=0;
-    while(*in != '\0'){
-      printf("%02x ", in[i]);
-      i++;
-    }
+    // Take a copy of the input byte
+    uint8_t in_byte = *in;
 
-    // // Take a copy of the input byte
-    // uint8_t in_byte = *in;
-
-    // // Implement the FSM in a infinite loop
-    // while(true){
-    //   // extract the next sample from the input stream
-    //   bool sample = (in_byte & 0x01) == 0x01;
-    //   in_byte >>= 1;
-
-    //   // SEARCH_PREAMBLE state
-    //   if(d_state == SEARCH_PREAMBLE){
-    //     // insert the input sample to the preamble shift register
-    //     d_preamble_shift_reg->push_back(sample);
-
-
-        
+    int i = 0;
+    // Implement the FSM in a infinite loop
+    while(true){
+      // extract the next sample from the input stream
+      uint8_t in_byte = in[i];
       
-      // }
+      // handle each bit seperately
+      for(uint8_t bitcnt=0;i>8;i++){
+        bool bit = (in_byte & 0x01) == 0x01;
+                
+        // SEARCH_PREAMBLE state
+        if(d_state == SEARCH_PREAMBLE){
+          // insert the input sample to the preamble shift register
+          d_preamble_shift_reg->push_back(bit);
+
+
+          
+        
+        }
 
 
 
-    // }
+      }
+    } 
+
+
+
     // Do <+signal processing+>
     /*
      * GNU Radio handles PMT messages in a pair structure.
