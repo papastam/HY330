@@ -3124,6 +3124,7 @@ lib/CMakeFiles/gnuradio-cs330_project2023.dir/fec_encoder_impl.cc.o: /home/chris
 lib/CMakeFiles/gnuradio-cs330_project2023.dir/frame_sync_impl.cc.o: /home/chris/Classes/HY330/project/gr-cs330_project2023/lib/frame_sync_impl.cc \
   /home/chris/Classes/HY330/project/gr-cs330_project2023/include/gnuradio/cs330_project2023/api.h \
   /home/chris/Classes/HY330/project/gr-cs330_project2023/include/gnuradio/cs330_project2023/frame_sync.h \
+  /home/chris/Classes/HY330/project/gr-cs330_project2023/include/gnuradio/cs330_project2023/shift_reg.h \
   /home/chris/Classes/HY330/project/gr-cs330_project2023/lib/frame_sync_impl.h \
   /usr/include/alloca.h \
   /usr/include/asm-generic/errno-base.h \

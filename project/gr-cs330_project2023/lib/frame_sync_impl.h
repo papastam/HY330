@@ -9,6 +9,7 @@
 #define INCLUDED_CS330_PROJECT2023_FRAME_SYNC_IMPL_H
 
 #include <gnuradio/cs330_project2023/frame_sync.h>
+#include "../include/gnuradio/cs330_project2023/shift_reg.h"
 
 namespace gr {
   namespace cs330_project2023 {
@@ -21,8 +22,24 @@ namespace gr {
         QPSK
     } mod_t;
 
-    const mod_t d_mod;
+    typedef enum {
+        SEARCH_PREAMBLE,
+        SEARCH_SYNC_WORD,
+        READ_LENGTH,
+        READ_FRAME,
+    } state_t;
 
+    uint8_t d_preamble;
+    uint8_t d_preamble_len;
+    std::vector<uint8_t> d_sync_word;
+
+    const mod_t d_mod;
+    state_t d_state;
+
+    shift_reg *d_preamble_shift_reg;
+    shift_reg *d_preamble_prototype_shift_reg;
+    shift_reg *d_syncword_shift_reg;
+    shift_reg *d_syncword_prototype_shift_reg;
 
      public:
       frame_sync_impl(uint8_t preamble, uint8_t preamble_len,const std::vector<uint8_t> &sync_word, int mod);

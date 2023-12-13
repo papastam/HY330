@@ -130,7 +130,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [360, 332.0]
+    coordinate: [512, 352.0]
     rotation: 0
     state: enabled
 - name: pdu_random_pdu_0
@@ -158,7 +158,7 @@ connections:
 - [blocks_message_strobe_random_0, strobe, pdu_random_pdu_0, generate]
 - [cs330_project2023_framer_0, frame, blocks_message_debug_0, print_pdu]
 - [digital_crc32_async_bb_0, out, cs330_project2023_framer_0, pdu]
-- [network_socket_pdu_0, pdus, cs330_project2023_framer_0, pdu]
+- [network_socket_pdu_0, pdus, digital_crc32_async_bb_0, in]
 - [pdu_random_pdu_0, pdus, digital_crc32_async_bb_0, in]
 
 metadata:

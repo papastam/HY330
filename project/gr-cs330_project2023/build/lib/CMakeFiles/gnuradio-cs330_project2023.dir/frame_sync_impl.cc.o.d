@@ -912,4 +912,5 @@ lib/CMakeFiles/gnuradio-cs330_project2023.dir/frame_sync_impl.cc.o: \
  /usr/include/gnuradio/config.h /usr/include/gnuradio/block_registry.h \
  /usr/include/gmpxx.h /usr/include/c++/13/cfloat \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/float.h \
- /usr/include/x86_64-linux-gnu/gmp.h
+ /usr/include/x86_64-linux-gnu/gmp.h \
+ /home/chris/Classes/HY330/project/gr-cs330_project2023/lib/../include/gnuradio/cs330_project2023/shift_reg.h

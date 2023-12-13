@@ -81,7 +81,7 @@ class test_framer(gr.top_block, Qt.QWidget):
         ##################################################
         self.msg_connect((self.cs330_project2023_framer_0, 'frame'), (self.blocks_message_debug_0, 'print_pdu'))
         self.msg_connect((self.digital_crc32_async_bb_0, 'out'), (self.cs330_project2023_framer_0, 'pdu'))
-        self.msg_connect((self.network_socket_pdu_0, 'pdus'), (self.cs330_project2023_framer_0, 'pdu'))
+        self.msg_connect((self.network_socket_pdu_0, 'pdus'), (self.digital_crc32_async_bb_0, 'in'))
 
 
     def closeEvent(self, event):

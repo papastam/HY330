@@ -24,6 +24,10 @@ namespace gr {
       framer_impl(uint8_t preamble, size_t preamble_len,const std::vector<uint8_t> &sync_word);
       ~framer_impl();
 
+      // inintialize all fields
+      uint8_t local_preamble;
+      size_t local_preamble_len;
+      std::vector<uint8_t> local_sync_word;
     };
 
   } // namespace cs330_project2023
