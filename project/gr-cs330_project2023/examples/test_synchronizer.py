@@ -77,7 +77,7 @@ class test_synchronizer(gr.top_block, Qt.QWidget):
             1024, #size
             samp_rate, #samp_rate
             "", #name
-            1, #number of inputs
+            2, #number of inputs
             None # parent
         )
         self.qtgui_time_sink_x_0.set_update_time(0.10)
@@ -108,7 +108,7 @@ class test_synchronizer(gr.top_block, Qt.QWidget):
             -1, -1, -1, -1, -1]
 
 
-        for i in range(1):
+        for i in range(2):
             if len(labels[i]) == 0:
                 self.qtgui_time_sink_x_0.set_line_label(i, "Data {0}".format(i))
             else:
@@ -122,13 +122,13 @@ class test_synchronizer(gr.top_block, Qt.QWidget):
         self._qtgui_time_sink_x_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0.qwidget(), Qt.QWidget)
         self.top_layout.addWidget(self._qtgui_time_sink_x_0_win)
         self.pdu_pdu_to_tagged_stream_0 = pdu.pdu_to_tagged_stream(gr.types.byte_t, 'packet_len')
-        self.network_socket_pdu_0 = network.socket_pdu('UDP_SERVER', '', '52001', 10000, False)
+        self.network_socket_pdu_0 = network.socket_pdu('UDP_SERVER', '', '52002', 10000, False)
         self.digital_crc32_async_bb_0_0 = digital.crc32_async_bb(True)
         self.digital_crc32_async_bb_0 = digital.crc32_async_bb(False)
         self.digital_burst_shaper_xx_0 = digital.burst_shaper_ff(([]), 0, 1000, False, "packet_len")
         self.digital_binary_slicer_fb_0 = digital.binary_slicer_fb()
-        self.cs330_project2023_framer_0 = cs330_project2023.framer(0xAA, 64, [0x58, 0x9A])
-        self.cs330_project2023_frame_sync_0 = cs330_project2023.frame_sync(0xAA, 64, [0x58, 0x9A], 0)
+        self.cs330_project2023_framer_0 = cs330_project2023.framer(0xFF, 64, [0x58, 0x9A])
+        self.cs330_project2023_frame_sync_0 = cs330_project2023.frame_sync(0xFF, 64, [0x58, 0x9A], 0)
         self.blocks_uchar_to_float_0 = blocks.uchar_to_float()
         self.blocks_packed_to_unpacked_xx_0 = blocks.packed_to_unpacked_bb(1, gr.GR_MSB_FIRST)
         self.blocks_message_debug_0 = blocks.message_debug(True, gr.log_levels.info)
@@ -147,6 +147,7 @@ class test_synchronizer(gr.top_block, Qt.QWidget):
         self.connect((self.blocks_uchar_to_float_0, 0), (self.qtgui_time_sink_x_0, 0))
         self.connect((self.digital_binary_slicer_fb_0, 0), (self.cs330_project2023_frame_sync_0, 0))
         self.connect((self.digital_burst_shaper_xx_0, 0), (self.digital_binary_slicer_fb_0, 0))
+        self.connect((self.digital_burst_shaper_xx_0, 0), (self.qtgui_time_sink_x_0, 1))
         self.connect((self.pdu_pdu_to_tagged_stream_0, 0), (self.blocks_packed_to_unpacked_xx_0, 0))
 
 

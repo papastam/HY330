@@ -57,7 +57,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [56, 200.0]
+    coordinate: [312, 304.0]
     rotation: 180
     state: true
 - name: blocks_message_strobe_random_0
@@ -95,7 +95,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1304, 152.0]
+    coordinate: [1472, 144.0]
     rotation: 0
     state: true
 - name: blocks_uchar_to_float_0
@@ -110,7 +110,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1328, 296.0]
+    coordinate: [1496, 288.0]
     rotation: 180
     state: true
 - name: cs330_project2023_frame_sync_0
@@ -122,14 +122,14 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     mod: '0'
-    preamble: '0xAA'
+    preamble: '0xFF'
     preamble_len: '64'
     sync_word: '[0x58, 0x9A]'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [528, 264.0]
+    coordinate: [784, 368.0]
     rotation: 180
     state: true
 - name: cs330_project2023_framer_0
@@ -140,14 +140,14 @@ blocks:
     comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
-    preamble: '0xAA'
+    preamble: '0xFF'
     preamble_len: '64'
     sync_word: '[0x58, 0x9A]'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [768, 144.0]
+    coordinate: [936, 136.0]
     rotation: 0
     state: true
 - name: digital_binary_slicer_fb_0
@@ -162,7 +162,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [800, 296.0]
+    coordinate: [1056, 400.0]
     rotation: 180
     state: true
 - name: digital_burst_shaper_xx_0
@@ -183,7 +183,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [976, 256.0]
+    coordinate: [1232, 360.0]
     rotation: 180
     state: true
 - name: digital_crc32_async_bb_0
@@ -199,7 +199,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [552, 160.0]
+    coordinate: [720, 152.0]
     rotation: 0
     state: enabled
 - name: digital_crc32_async_bb_0_0
@@ -215,7 +215,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [320, 288.0]
+    coordinate: [576, 392.0]
     rotation: 180
     state: enabled
 - name: network_socket_pdu_0
@@ -228,14 +228,14 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     mtu: '10000'
-    port: '52001'
+    port: '52002'
     tcp_no_delay: 'False'
     type: UDP_SERVER
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [320, 136.0]
+    coordinate: [464, 16.0]
     rotation: 0
     state: enabled
 - name: pdu_pdu_to_tagged_stream_0
@@ -252,7 +252,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1064, 160.0]
+    coordinate: [1232, 152.0]
     rotation: 0
     state: true
 - name: pdu_random_pdu_0
@@ -328,7 +328,7 @@ blocks:
     marker8: '-1'
     marker9: '-1'
     name: '""'
-    nconnections: '1'
+    nconnections: '2'
     size: '1024'
     srate: samp_rate
     stemplot: 'False'
@@ -368,7 +368,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [992, 408.0]
+    coordinate: [1032, 240.0]
     rotation: 180
     state: enabled
 
@@ -381,6 +381,7 @@ connections:
 - [cs330_project2023_framer_0, frame, pdu_pdu_to_tagged_stream_0, pdus]
 - [digital_binary_slicer_fb_0, '0', cs330_project2023_frame_sync_0, '0']
 - [digital_burst_shaper_xx_0, '0', digital_binary_slicer_fb_0, '0']
+- [digital_burst_shaper_xx_0, '0', qtgui_time_sink_x_0, '1']
 - [digital_crc32_async_bb_0, out, cs330_project2023_framer_0, pdu]
 - [digital_crc32_async_bb_0_0, out, blocks_message_debug_0, print_pdu]
 - [network_socket_pdu_0, pdus, digital_crc32_async_bb_0, in]
