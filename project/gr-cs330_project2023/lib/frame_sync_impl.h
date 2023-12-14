@@ -36,10 +36,10 @@ namespace gr {
     const mod_t d_mod;
     state_t d_state;
 
-    shift_reg d_preamble_shift_reg;
-    shift_reg d_preamble_prototype_shift_reg;
-    shift_reg d_syncword_shift_reg;
-    shift_reg d_syncword_prototype_shift_reg;
+    shift_reg *d_preamble_shift_reg;
+    shift_reg *d_preamble_prototype_shift_reg;
+    shift_reg *d_syncword_shift_reg;
+    shift_reg *d_syncword_prototype_shift_reg;
 
      public:
       frame_sync_impl(uint8_t preamble, uint8_t preamble_len,const std::vector<uint8_t> &sync_word, int mod);
