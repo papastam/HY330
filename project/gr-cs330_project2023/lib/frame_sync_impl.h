@@ -41,6 +41,9 @@ namespace gr {
     shift_reg *d_syncword_shift_reg;
     shift_reg *d_syncword_prototype_shift_reg;
 
+    uint8_t d_preamble_sr_len;
+    uint8_t d_syncword_sr_len;
+
      public:
       frame_sync_impl(uint8_t preamble, uint8_t preamble_len,const std::vector<uint8_t> &sync_word, int mod);
       ~frame_sync_impl();

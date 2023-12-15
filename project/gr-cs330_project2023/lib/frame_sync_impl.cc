@@ -38,7 +38,9 @@ namespace gr {
               d_preamble_shift_reg(           new shift_reg((preamble_len/2)*8)),
               d_preamble_prototype_shift_reg( new shift_reg((preamble_len/2)*8)),
               d_syncword_shift_reg(           new shift_reg((sync_word.size()/2)*8)),
-              d_syncword_prototype_shift_reg( new shift_reg((sync_word.size()/2)*8))
+              d_syncword_prototype_shift_reg( new shift_reg((sync_word.size()/2)*8)),
+              d_preamble_sr_len((preamble_len/2)*8),
+              d_syncword_sr_len((sync_word.size()/2)*8)
     {
       message_port_register_out(pmt::mp("pdu"));
 
@@ -78,30 +80,52 @@ namespace gr {
 
       int bit_count = 0;
 
-      for(int i = 0; i < 8; i++){
-        std::cout << ((in[0] >> i) & 0x01)  << std::endl;
-      }
-
+      
       for(int count = 0; count < noutput_items; count++){
+        std::cout << "Input: " << " ";
+        for(int i = 0; i < 8; i++){
+          std::cout << ((in[0] >> i) & 0x01) << " "; 
+        }
+        std::cout << std::endl;
         if(d_state==SEARCH_PREAMBLE){
           d_preamble_shift_reg->push_back(in[count]);
-          // Add the first half of the preamble to the shift register without checking
-          if(bit_count < (d_preamble_len*8)/4){
+          // Fill up the shift register
+          if(bit_count < d_preamble_sr_len){
             bit_count++;
             continue;
           }
-          if((*d_preamble_shift_reg ^ *d_preamble_prototype_shift_reg).count() <= (d_preamble_len*8)/2){
+          // And then compare it to the prototype
+          if((*d_preamble_shift_reg ^ *d_preamble_prototype_shift_reg).count() <= d_preamble_sr_len/2){
             d_state = SEARCH_SYNC_WORD;
             std::cout << "Found preamble\n" << std::endl;
             std::cout << "Detected Preamble:\n" << std::endl;
-            for(int i = 0; i < d_preamble_len/2; i++){
+            std::cout << d_preamble_shift_reg[0];
+          }
+        }else if(d_state==SEARCH_SYNC_WORD){
+          break;
+          d_syncword_shift_reg->push_back(in[count]);
+          // Fill up the shift register
+          if(bit_count < d_syncword_sr_len){
+            bit_count++;
+            continue;
+          }
+          // And then compare it to the prototype
+          if((*d_syncword_shift_reg ^ *d_syncword_prototype_shift_reg).count() <= d_syncword_sr_len/2){
+            d_state = READ_LENGTH;
+            std::cout << "Found sync word\n" << std::endl;
+            std::cout << "Detected Sync Word:\n" << std::endl;
+            for(long unsigned int i = 0; i < d_sync_word.size(); i++){
               for(int j = 0; j < 8; j++){
-                std::cout << d_preamble_shift_reg[i*8+j];
+                std::cout << d_syncword_shift_reg[i*8+j];
               }
               std::cout << std::endl;
-            }            
-          }else{
+            }         
           }
+        }else if(d_state==READ_LENGTH){
+          d_state = READ_FRAME;
+          std::cout << "Reading length\n" << std::endl;
+        }else if(d_state==READ_FRAME){
+          std::cout << "Reading frame\n" << std::endl;
         }
       }
 
