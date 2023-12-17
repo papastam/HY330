@@ -27,6 +27,7 @@ namespace gr {
         SEARCH_SYNC_WORD,
         READ_LENGTH,
         READ_FRAME,
+        DONE
     } state_t;
 
     uint8_t d_preamble;
@@ -43,6 +44,10 @@ namespace gr {
 
     uint8_t d_preamble_sr_len;
     uint8_t d_syncword_sr_len;
+
+    uint8_t d_payload_len;
+    uint8_t read_length_index;
+    bool read_length[16];
 
      public:
       frame_sync_impl(uint8_t preamble, uint8_t preamble_len,const std::vector<uint8_t> &sync_word, int mod);

@@ -37,10 +37,13 @@ namespace gr {
               d_state(SEARCH_PREAMBLE),
               d_preamble_shift_reg(           new shift_reg((preamble_len/2)*8)),
               d_preamble_prototype_shift_reg( new shift_reg((preamble_len/2)*8)),
-              d_syncword_shift_reg(           new shift_reg((sync_word.size()/2)*8)),
-              d_syncword_prototype_shift_reg( new shift_reg((sync_word.size()/2)*8)),
+              d_syncword_shift_reg(           new shift_reg((sync_word.size())*8)),
+              d_syncword_prototype_shift_reg( new shift_reg((sync_word.size())*8)),
               d_preamble_sr_len((preamble_len/2)*8),
-              d_syncword_sr_len((sync_word.size()/2)*8)
+              d_syncword_sr_len((sync_word.size())*8),
+              d_payload_len(0),
+              read_length_index(0),
+              read_length({0})
     {
       message_port_register_out(pmt::mp("pdu"));
 
@@ -79,14 +82,21 @@ namespace gr {
       pmt::pmt_t pair = pmt::cons(pmt::PMT_NIL, pmt::PMT_NIL);
 
       int bit_count = 0;
-
       
       for(int count = 0; count < noutput_items; count++){
-        std::cout << "Input: " << " ";
-        for(int i = 0; i < 8; i++){
-          std::cout << ((in[0] >> i) & 0x01) << " "; 
+        // std::cout << "Input: " << " ";
+        // for(int i = 0; i < 8; i++){
+        //   std::cout << ((in[0] >> i) & 0x01) << " "; 
+        // }
+        // std::cout << std::endl;
+        if(d_state==DONE){
+          break;
         }
-        std::cout << std::endl;
+        if((long unsigned int) count > ((d_preamble_len+d_sync_word.size())*8)+16 ){
+          std::cout << "No preamble or sync word found in the first " << ((d_preamble_len+d_sync_word.size())*8)+16 << " bits" << std::endl;
+          std::cout << "Exiting" << std::endl;
+          break;
+        }
         if(d_state==SEARCH_PREAMBLE){
           d_preamble_shift_reg->push_back(in[count]);
           // Fill up the shift register
@@ -95,37 +105,42 @@ namespace gr {
             continue;
           }
           // And then compare it to the prototype
-          if((*d_preamble_shift_reg ^ *d_preamble_prototype_shift_reg).count() <= d_preamble_sr_len/2){
-            d_state = SEARCH_SYNC_WORD;
+          if((*d_preamble_shift_reg ^ *d_preamble_prototype_shift_reg).count() <= (d_preamble_sr_len - (d_preamble_sr_len/2))){
             std::cout << "Found preamble\n" << std::endl;
             std::cout << "Detected Preamble:\n" << std::endl;
-            std::cout << d_preamble_shift_reg[0];
+            std::cout << d_preamble_shift_reg[0] << std::endl << std::endl;
+            std::cout << "Transitioning to search for sync word\n" << std::endl;
+            d_state = SEARCH_SYNC_WORD;
           }
         }else if(d_state==SEARCH_SYNC_WORD){
-          break;
           d_syncword_shift_reg->push_back(in[count]);
           // Fill up the shift register
           if(bit_count < d_syncword_sr_len){
+            std::cout << "bit count: " << bit_count << std::endl;
             bit_count++;
             continue;
           }
           // And then compare it to the prototype
-          if((*d_syncword_shift_reg ^ *d_syncword_prototype_shift_reg).count() <= d_syncword_sr_len/2){
-            d_state = READ_LENGTH;
-            std::cout << "Found sync word\n" << std::endl;
+          if((*d_syncword_shift_reg ^ *d_syncword_prototype_shift_reg).count() >= d_syncword_sr_len - (d_syncword_sr_len/4)){
+            std::cout << "Found sync word with count of matching bits:\n" <<  (*d_syncword_shift_reg ^ *d_syncword_prototype_shift_reg).count() << std::endl;
             std::cout << "Detected Sync Word:\n" << std::endl;
-            for(long unsigned int i = 0; i < d_sync_word.size(); i++){
-              for(int j = 0; j < 8; j++){
-                std::cout << d_syncword_shift_reg[i*8+j];
-              }
-              std::cout << std::endl;
-            }         
+            std::cout << d_syncword_shift_reg[0] << std::endl << std::endl;
+            std::cout << "Transitioning to read length\n" << std::endl;      
+            d_state = READ_LENGTH;
           }
         }else if(d_state==READ_LENGTH){
-          d_state = READ_FRAME;
-          std::cout << "Reading length\n" << std::endl;
+          // std::cout << "Reading length\n" << std::endl;
+
+          read_length[read_length_index]=(bool) in[count];
+          read_length_index++;
+
+          if (read_length_index==15){
+            // turn read_length array into a number
+            d_state=READ_FRAME;
+          }
         }else if(d_state==READ_FRAME){
-          std::cout << "Reading frame\n" << std::endl;
+          // std::cout << "Reading frame\n" << std::endl;
+          d_state=DONE;
         }
       }
 
