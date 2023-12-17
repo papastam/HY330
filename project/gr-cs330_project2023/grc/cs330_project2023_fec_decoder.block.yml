@@ -8,7 +8,7 @@ templates:
 
 
 parameters:
-- id: fec_type
+- id: type
   label: FEC Type
   dtype: enum
   options: [No FEC, Hamming, Golay]
