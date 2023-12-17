@@ -75,7 +75,7 @@ framer_impl::construct(pmt::pmt_t m)
 
     // add payload length
     for (long unsigned int i = 0; i < 2; i++) {
-        bytes_out[local_preamble_len + local_sync_word.size() + i] = ((pdu_len+4) >> (8 * i)) & 0xFF;
+        bytes_out[local_preamble_len + local_sync_word.size() + i] = ((pdu_len) >> (8 * (1-i))) & 0xFF;
     }
 
     // add payload

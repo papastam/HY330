@@ -57,7 +57,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1288, 136.0]
+    coordinate: [1264, 112.0]
     rotation: 0
     state: true
 - name: blocks_message_strobe_random_0
@@ -123,7 +123,7 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     mtu: '10000'
-    port: '52001'
+    port: '52002'
     tcp_no_delay: 'False'
     type: UDP_SERVER
   states:

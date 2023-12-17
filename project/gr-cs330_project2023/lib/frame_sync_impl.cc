@@ -39,25 +39,24 @@ namespace gr {
               d_preamble_prototype_shift_reg( new shift_reg((preamble_len/2)*8)),
               d_syncword_shift_reg(           new shift_reg((sync_word.size())*8)),
               d_syncword_prototype_shift_reg( new shift_reg((sync_word.size())*8)),
-              d_preamble_sr_len((preamble_len/2)*8),
               d_syncword_sr_len((sync_word.size())*8),
-              d_payload_len(0),
               read_length_index(0),
-              read_length({0})
+              d_payload_len(0)
     {
       message_port_register_out(pmt::mp("pdu"));
 
       // Initialize the preamble prototype shift register
-      for(int i = 0; i < preamble_len/2; i++){
+      for(int i = 0; i < preamble_len / 2; i++){
         for(int j = 0; j < 8; j++){
-          d_preamble_prototype_shift_reg->push_back(get_indexed_bit(preamble, j));
+            *d_preamble_prototype_shift_reg >>= ((d_preamble & (1 << j)) >> j);
         }
       }
+
 
       // Initialize the sync word prototype shift register  
       for(long unsigned int i = 0; i < sync_word.size(); i++){
         for(int j = 0; j < 8; j++){
-          d_syncword_prototype_shift_reg->push_back(get_indexed_bit(sync_word[i], j));
+            *d_syncword_prototype_shift_reg >>= ((sync_word[sync_word.size() - i - 1] & (1 << j)) >> j);
         }
       }
     }
@@ -82,30 +81,29 @@ namespace gr {
       pmt::pmt_t pair = pmt::cons(pmt::PMT_NIL, pmt::PMT_NIL);
 
       int bit_count = 0;
+      uint plcount = 0;
+      uint plbitcount = 0;
+
+      noutput_items += 25;
       
       for(int count = 0; count < noutput_items; count++){
-        // std::cout << "Input: " << " ";
-        // for(int i = 0; i < 8; i++){
-        //   std::cout << ((in[0] >> i) & 0x01) << " "; 
-        // }
-        // std::cout << std::endl;
         if(d_state==DONE){
           break;
         }
-        if((long unsigned int) count > ((d_preamble_len+d_sync_word.size())*8)+16 ){
-          std::cout << "No preamble or sync word found in the first " << ((d_preamble_len+d_sync_word.size())*8)+16 << " bits" << std::endl;
+        if((d_state == SEARCH_PREAMBLE || d_state == SEARCH_SYNC_WORD) && (long unsigned int) count > ((d_preamble_len+d_sync_word.size()+2)*8) ){
+          std::cout << "Preamble and sync word found in the first " << ((d_preamble_len+d_sync_word.size())*8)+16 << " bits" << std::endl;
           std::cout << "Exiting" << std::endl;
           break;
         }
         if(d_state==SEARCH_PREAMBLE){
           d_preamble_shift_reg->push_back(in[count]);
           // Fill up the shift register
-          if(bit_count < d_preamble_sr_len){
+          if(bit_count < d_preamble_len*4){
             bit_count++;
             continue;
           }
           // And then compare it to the prototype
-          if((*d_preamble_shift_reg ^ *d_preamble_prototype_shift_reg).count() <= (d_preamble_sr_len - (d_preamble_sr_len/2))){
+          if((*d_preamble_shift_reg ^ *d_preamble_prototype_shift_reg).count() <= (d_preamble_len*2)){
             std::cout << "Found preamble\n" << std::endl;
             std::cout << "Detected Preamble:\n" << std::endl;
             std::cout << d_preamble_shift_reg[0] << std::endl << std::endl;
@@ -116,40 +114,69 @@ namespace gr {
           d_syncword_shift_reg->push_back(in[count]);
           // Fill up the shift register
           if(bit_count < d_syncword_sr_len){
-            std::cout << "bit count: " << bit_count << std::endl;
             bit_count++;
             continue;
           }
           // And then compare it to the prototype
-          if((*d_syncword_shift_reg ^ *d_syncword_prototype_shift_reg).count() >= d_syncword_sr_len - (d_syncword_sr_len/4)){
-            std::cout << "Found sync word with count of matching bits:\n" <<  (*d_syncword_shift_reg ^ *d_syncword_prototype_shift_reg).count() << std::endl;
+          if((*d_syncword_shift_reg ^ *d_syncword_prototype_shift_reg).count() <= d_syncword_sr_len/4){
             std::cout << "Detected Sync Word:\n" << std::endl;
             std::cout << d_syncword_shift_reg[0] << std::endl << std::endl;
             std::cout << "Transitioning to read length\n" << std::endl;      
             d_state = READ_LENGTH;
           }
         }else if(d_state==READ_LENGTH){
-          // std::cout << "Reading length\n" << std::endl;
-
           read_length[read_length_index]=(bool) in[count];
           read_length_index++;
 
-          if (read_length_index==15){
+          if (read_length_index==16){
             // turn read_length array into a number
+            std::cout << "Read length array:\n" << std::endl;
+            d_payload_len=0;
+            for(int i=0;i<16;i++){
+              d_payload_len+=read_length[i]<<(15-i);
+            }
+            std::cout << "Payload length: " << d_payload_len << std::endl;
+            std::cout << "Transitioning to read frame\n" << std::endl;
             d_state=READ_FRAME;
           }
         }else if(d_state==READ_FRAME){
-          // std::cout << "Reading frame\n" << std::endl;
+          if(plcount == 0){
+            d_payload = new uint8_t[d_payload_len];
+          }
+          std::cout << "count: " << count << " | noutput_items: " << noutput_items << std::endl;
+
+          if(plcount < d_payload_len){
+            if(plbitcount < 8){
+              d_payload[plcount] |= (in[count] << (7-plbitcount));
+              plbitcount++;
+              std::cout << "Payload bit read\n" << std::endl;
+              continue; 
+            }
+            std::cout << "Payload byte read\n" << std::endl;
+            plbitcount = 0;
+            plcount++;
+            continue;
+          }
+          
+          std::cout << "Payload read\n" << std::endl;
+          std::cout << "Transitioning to done\n" << std::endl;
           d_state=DONE;
+          break;
         }
       }
 
+      if (d_state==DONE){
+        std::cout << "Done" << std::endl;
+        std::cout << "Payload:\n" << std::endl;
+        for(int i=0;i<d_payload_len;i++){
+          std::cout << d_payload[i] << std::endl;
+        }
+        std::cout << std::endl;
 
-      pmt::pmt_t bytes_out_pmt = pmt::init_u8vector((size_t) 1, (const uint8_t*)1);
+        pmt::pmt_t bytes_out_pmt = pmt::init_u8vector(d_payload_len, d_payload);
+        message_port_pub(pmt::mp("pdu"), pmt::cons(pmt::PMT_NIL, bytes_out_pmt));
+      }
       
-
-      message_port_pub(pmt::mp("pdu"), pmt::cons(pmt::PMT_NIL, bytes_out_pmt));
-
       // Tell runtime system how many output items we produced.
       return noutput_items;
     }

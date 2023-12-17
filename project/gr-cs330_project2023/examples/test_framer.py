@@ -70,7 +70,7 @@ class test_framer(gr.top_block, Qt.QWidget):
         # Blocks
         ##################################################
 
-        self.network_socket_pdu_0 = network.socket_pdu('UDP_SERVER', '', '52001', 10000, False)
+        self.network_socket_pdu_0 = network.socket_pdu('UDP_SERVER', '', '52002', 10000, False)
         self.digital_crc32_async_bb_0 = digital.crc32_async_bb(False)
         self.cs330_project2023_framer_0 = cs330_project2023.framer(0xAA, 64, [0x58, 0x9A])
         self.blocks_message_debug_0 = blocks.message_debug(True, gr.log_levels.info)
