@@ -19,6 +19,8 @@ namespace gr {
     void
     interleave(pmt::pmt_t m);
 
+    uint8_t d_block_size;
+
 
      public:
       interleaver_impl(size_t block_size);
