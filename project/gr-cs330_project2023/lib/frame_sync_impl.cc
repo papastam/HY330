@@ -70,6 +70,7 @@ namespace gr {
       delete d_preamble_prototype_shift_reg;
       delete d_syncword_shift_reg;
       delete d_syncword_prototype_shift_reg;
+      delete d_payload;
     }
 
     int
@@ -140,7 +141,9 @@ namespace gr {
             d_state=READ_FRAME;
           }
         }else if(d_state==READ_FRAME){
-          if(plcount == 0){
+          if(plcount == 0 && plbitcount == 0){
+            std::cout << "Allocating payload\n" << std::endl;
+            std::cout << "Payload length: " << d_payload_len << std::endl;
             d_payload = new uint8_t[d_payload_len];
           }
           std::cout << "count: " << count << " | noutput_items: " << noutput_items << std::endl;

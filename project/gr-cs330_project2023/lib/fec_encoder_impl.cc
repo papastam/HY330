@@ -57,6 +57,8 @@ fec_encoder_impl::encode(pmt::pmt_t m)
     uint8_t *bits_out = nullptr;
     pmt::pmt_t bytes(pmt::cdr(m));
 
+    const uint8_t *bytes_in = nullptr;
+
     switch (d_type) {
         /* No FEC just copy the input message to the output */
         case 0:
@@ -64,7 +66,7 @@ fec_encoder_impl::encode(pmt::pmt_t m)
             return;
         case 1:
             size_t pdu_length;
-            const uint8_t *bytes_in = pmt::u8vector_elements(bytes, pdu_length);
+            bytes_in = pmt::u8vector_elements(bytes, pdu_length);
             
             bytes_out = new uint8_t[pdu_length*3];
             bits_out = new uint8_t[(pdu_length*3)*8];
@@ -87,6 +89,7 @@ fec_encoder_impl::encode(pmt::pmt_t m)
             return;
         case 2:
             /* Do Golay encoding */
+            message_port_pub(pmt::mp("pdu_out"), m);
             return;
         default:
             throw std::runtime_error("fec_encoder: Invalid FEC");

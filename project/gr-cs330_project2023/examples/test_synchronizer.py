@@ -139,8 +139,8 @@ class test_synchronizer(gr.top_block, Qt.QWidget):
         ##################################################
         # Connections
         ##################################################
+        self.msg_connect((self.cs330_project2023_frame_sync_0, 'pdu'), (self.blocks_message_debug_0, 'print_pdu'))
         self.msg_connect((self.cs330_project2023_frame_sync_0, 'pdu'), (self.digital_crc32_async_bb_0_0, 'in'))
-        self.msg_connect((self.cs330_project2023_framer_0, 'frame'), (self.blocks_message_debug_0, 'print_pdu'))
         self.msg_connect((self.cs330_project2023_framer_0, 'frame'), (self.pdu_pdu_to_tagged_stream_0, 'pdus'))
         self.msg_connect((self.digital_crc32_async_bb_0, 'out'), (self.cs330_project2023_framer_0, 'pdu'))
         self.msg_connect((self.digital_crc32_async_bb_0_0, 'out'), (self.blocks_message_debug_0, 'print_pdu'))
