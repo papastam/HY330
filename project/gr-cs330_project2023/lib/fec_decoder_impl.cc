@@ -49,10 +49,31 @@ namespace gr {
     {
     }
 
+bool calculate_ham(bool bit1, bool bit2, bool bit3){
+  // Calculate the average of the 3 bits
+  int sum = ((int) bit1 + (int) bit2 + (int) bit3);
+  if (sum >= 2){
+    return true;
+  }
+  return false;
+}
  
 void
 fec_decoder_impl::decode(pmt::pmt_t m)
 {
+    pmt::pmt_t bytes(pmt::cdr(m));
+    size_t pdu_len;
+    const uint8_t *bytes_in = pmt::u8vector_elements(bytes, pdu_len);
+
+    uint8_t *bytes_out = nullptr;
+    uint8_t *bits_out = nullptr;
+
+    uint bitcnt = 0;
+
+    bool bit1 = false;
+    bool bit2 = false;
+    bool bit3 = false;
+
     switch (d_type) {
     /* No FEC just copy the input message to the output */
     case 0:
@@ -60,6 +81,33 @@ fec_decoder_impl::decode(pmt::pmt_t m)
         return;
     case 1:
         /* Do Hamming encoding */
+        bytes_out = new uint8_t[pdu_len/3];
+        bits_out = new uint8_t[(pdu_len*8)/3];
+        
+        for(uint byteindex; byteindex < pdu_len/3; byteindex++){
+          for(uint bitindex; bitindex < 8; bitindex++){
+            // 3 cases for each index of the bit
+            if(bitcnt == 0 ){
+              bit1 = (bytes_in[byteindex] & (0x01 << bitindex)) >> bitindex;
+              bitcnt++;
+            }else if(bitcnt == 1){
+              bit2 = (bytes_in[byteindex] & (0x01 << bitindex)) >> bitindex;
+              bitcnt++;
+            }else if(bitcnt == 2){
+              bit3 = (bytes_in[byteindex] & (0x01 << bitindex)) >> bitindex;
+              bitcnt=0;
+              bits_out[(byteindex*8)+bitindex] = calculate_ham(bit1, bit2, bit3);
+            }
+          }
+        }
+
+        for(uint byteindex; byteindex < pdu_len/3; byteindex++){
+          for(uint bitindex; bitindex < 8; bitindex++){
+            bytes_out[byteindex] |= bits_out[(byteindex*8)+bitindex] << bitindex;
+          }
+        }
+
+        message_port_pub(pmt::mp("pdu_out"), pmt::init_u8vector(pdu_len/3, bytes_out));
         return;
     case 2:
         /* Do Golay encoding */
